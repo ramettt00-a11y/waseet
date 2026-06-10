@@ -1,0 +1,898 @@
+cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>وسيط | Waseet – ربط المواهب بالفرص</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green:    #1A6B4A;
+      --gold:     #C9A84C;
+      --sand:     #F5EFE0;
+      --dark:     #0F1F17;
+      --mid:      #2C4A38;
+      --text:     #1C2B22;
+      --light:    #FAFAF7;
+      --border:   #D4C9A8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      background: var(--light);
+      color: var(--text);
+      direction: rtl;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      background: rgba(15, 31, 23, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(201,168,76,.2);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: .6rem;
+      text-decoration: none;
+    }
+    .nav-logo-icon {
+      width: 38px; height: 38px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 900; font-size: 1rem;
+      color: var(--dark);
+    }
+    .nav-logo-text { color: #fff; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 1.15rem; }
+    .nav-logo-sub  { color: var(--gold); font-size: .72rem; letter-spacing: .06em; }
+
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,.8); text-decoration: none; font-size: .9rem; transition: color .2s; }
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      background: var(--gold); color: var(--dark);
+      padding: .45rem 1.2rem; border-radius: 4px;
+      font-weight: 700; font-size: .88rem; text-decoration: none;
+      transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: .85; }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      background: var(--dark);
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+      padding-top: 64px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 80% 40%, rgba(26,107,74,.35) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 50% at 15% 80%, rgba(201,168,76,.12) 0%, transparent 60%);
+    }
+    .hero-pattern {
+      position: absolute; inset: 0; opacity: .04;
+      background-image: repeating-linear-gradient(
+        45deg, var(--gold) 0, var(--gold) 1px, transparent 0, transparent 50%
+      );
+      background-size: 28px 28px;
+    }
+    .hero-inner {
+      position: relative; z-index: 2;
+      max-width: 1100px; margin: 0 auto; padding: 4rem 2rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(201,168,76,.15); border: 1px solid rgba(201,168,76,.3);
+      color: var(--gold); font-size: .8rem; padding: .35rem .9rem;
+      border-radius: 2rem; margin-bottom: 1.4rem; letter-spacing: .04em;
+    }
+    .hero-h1 {
+      font-family: 'Cairo', sans-serif;
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      font-weight: 900; line-height: 1.2;
+      color: #fff; margin-bottom: 1.2rem;
+    }
+    .hero-h1 span { color: var(--gold); }
+    .hero-p { color: rgba(255,255,255,.65); line-height: 1.9; font-size: 1.05rem; margin-bottom: 2rem; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--gold); color: var(--dark);
+      padding: .75rem 1.8rem; border-radius: 5px;
+      font-weight: 700; font-size: .95rem; text-decoration: none;
+      transition: transform .15s, opacity .15s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); opacity: .9; }
+    .btn-outline {
+      border: 1.5px solid rgba(255,255,255,.3); color: #fff;
+      padding: .75rem 1.8rem; border-radius: 5px;
+      font-size: .95rem; text-decoration: none;
+      transition: border-color .2s, background .2s;
+    }
+    .btn-outline:hover { border-color: var(--gold); background: rgba(201,168,76,.08); }
+
+    /* Card flip visual */
+    .hero-visual {
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .hcard {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: 1.2rem 1.4rem;
+      display: flex; align-items: center; gap: 1rem;
+      backdrop-filter: blur(6px);
+      transform: translateX(0); transition: transform .3s;
+    }
+    .hcard:hover { transform: translateX(-6px); border-color: rgba(201,168,76,.4); }
+    .hcard-icon {
+      width: 44px; height: 44px; border-radius: 8px;
+      background: rgba(201,168,76,.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+    }
+    .hcard-title { color: #fff; font-weight: 600; font-size: .95rem; }
+    .hcard-sub   { color: rgba(255,255,255,.45); font-size: .78rem; }
+    .hcard-badge {
+      margin-right: auto; background: rgba(26,107,74,.6);
+      color: #7FFFC4; font-size: .72rem; padding: .25rem .7rem;
+      border-radius: 2rem; white-space: nowrap;
+    }
+
+    /* ─── STATS ─── */
+    #stats {
+      background: var(--green);
+      padding: 3rem 2rem;
+    }
+    .stats-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; text-align: center;
+    }
+    .stat-num {
+      font-family: 'Cairo', sans-serif;
+      font-size: 2.4rem; font-weight: 900;
+      color: var(--gold); line-height: 1;
+    }
+    .stat-label { color: rgba(255,255,255,.7); font-size: .85rem; margin-top: .4rem; }
+
+    /* ─── SECTION SHARED ─── */
+    section { padding: 5rem 2rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-eyebrow {
+      display: inline-block;
+      color: var(--green); font-size: .78rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      border-bottom: 2px solid var(--gold); padding-bottom: .25rem; margin-bottom: .9rem;
+    }
+    .section-h2 {
+      font-family: 'Cairo', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 900; color: var(--dark); margin-bottom: .8rem;
+    }
+    .section-p { color: #556; line-height: 1.9; max-width: 560px; }
+
+    /* ─── HOW IT WORKS ─── */
+    #how { background: var(--sand); }
+    .steps {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; margin-top: 3rem;
+    }
+    .step {
+      background: #fff; border-radius: 10px; padding: 2rem;
+      border: 1px solid var(--border); position: relative;
+      transition: box-shadow .2s;
+    }
+    .step:hover { box-shadow: 0 8px 30px rgba(26,107,74,.1); }
+    .step-num {
+      font-family: 'Cairo', sans-serif;
+      font-size: 3rem; font-weight: 900;
+      color: rgba(201,168,76,.25); line-height: 1; margin-bottom: .5rem;
+    }
+    .step-icon { font-size: 1.8rem; margin-bottom: .7rem; }
+    .step h3 { font-weight: 700; font-size: 1.05rem; color: var(--dark); margin-bottom: .5rem; }
+    .step p  { font-size: .88rem; color: #667; line-height: 1.8; }
+
+    /* ─── SERVICES ─── */
+    #services { background: var(--light); }
+    .services-grid {
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; margin-top: 3rem;
+    }
+    .srv-card {
+      border: 1.5px solid var(--border); border-radius: 10px; padding: 1.8rem;
+      display: flex; gap: 1.2rem; align-items: flex-start;
+      transition: border-color .2s, transform .2s;
+    }
+    .srv-card:hover { border-color: var(--green); transform: translateY(-3px); }
+    .srv-icon {
+      width: 50px; height: 50px; border-radius: 8px;
+      background: var(--sand); display: flex; align-items: center;
+      justify-content: center; font-size: 1.5rem; flex-shrink: 0;
+    }
+    .srv-card h3 { font-weight: 700; font-size: 1rem; color: var(--dark); margin-bottom: .4rem; }
+    .srv-card p  { font-size: .85rem; color: #667; line-height: 1.8; }
+
+    /* ─── UPLOAD FORM ─── */
+    #upload { background: var(--sand); }
+    .upload-wrap {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 3rem; align-items: start;
+    }
+    .upload-info h3 { font-family: 'Cairo',sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; }
+    .upload-info ul { list-style: none; display: flex; flex-direction: column; gap: .7rem; }
+    .upload-info li { display: flex; align-items: center; gap: .7rem; font-size: .9rem; color: #445; }
+    .upload-info li::before {
+      content: '✓'; width: 22px; height: 22px; border-radius: 50%;
+      background: var(--green); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; flex-shrink: 0;
+    }
+
+    .form-card {
+      background: #fff; border-radius: 12px; padding: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,.06);
+    }
+    .form-card h3 { font-family: 'Cairo',sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--dark); }
+    .tab-switch {
+      display: flex; gap: .5rem; margin-bottom: 1.5rem;
+      background: var(--sand); border-radius: 6px; padding: .3rem;
+    }
+    .tab-btn {
+      flex: 1; padding: .5rem; border: none; border-radius: 4px;
+      font-family: 'Tajawal',sans-serif; font-size: .88rem; cursor: pointer;
+      background: transparent; color: #667; transition: all .2s;
+    }
+    .tab-btn.active { background: var(--green); color: #fff; font-weight: 600; }
+
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; font-size: .82rem; font-weight: 600; color: var(--mid); margin-bottom: .4rem; }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%; padding: .65rem .9rem;
+      border: 1.5px solid var(--border); border-radius: 6px;
+      font-family: 'Tajawal',sans-serif; font-size: .9rem; color: var(--text);
+      background: #fff; transition: border-color .2s;
+      outline: none;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--green); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+
+    .file-drop {
+      border: 2px dashed var(--border); border-radius: 8px;
+      padding: 2rem; text-align: center; cursor: pointer;
+      transition: border-color .2s, background .2s;
+      background: var(--sand);
+    }
+    .file-drop:hover { border-color: var(--green); background: rgba(26,107,74,.04); }
+    .file-drop-icon { font-size: 2rem; margin-bottom: .5rem; }
+    .file-drop p { font-size: .85rem; color: #778; }
+    .file-drop span { color: var(--green); font-weight: 600; cursor: pointer; }
+    #file-input { display: none; }
+    .file-chosen { font-size: .78rem; color: var(--green); margin-top: .5rem; }
+
+    .submit-btn {
+      width: 100%; padding: .85rem;
+      background: var(--green); color: #fff;
+      border: none; border-radius: 7px;
+      font-family: 'Cairo',sans-serif; font-weight: 700; font-size: 1rem;
+      cursor: pointer; margin-top: 1.2rem;
+      transition: background .2s, transform .15s;
+    }
+    .submit-btn:hover { background: var(--mid); transform: translateY(-1px); }
+
+    /* ─── TESTIMONIALS ─── */
+    #testimonials { background: var(--dark); }
+    #testimonials .section-h2 { color: #fff; }
+    #testimonials .section-p  { color: rgba(255,255,255,.55); }
+    .testi-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem;
+    }
+    .testi-card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px; padding: 1.6rem;
+    }
+    .testi-stars { color: var(--gold); font-size: .9rem; margin-bottom: .8rem; }
+    .testi-text  { color: rgba(255,255,255,.7); font-size: .88rem; line-height: 1.8; margin-bottom: 1rem; }
+    .testi-author { display: flex; align-items: center; gap: .8rem; }
+    .testi-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--green); display: flex; align-items: center;
+      justify-content: center; color: #fff; font-weight: 700; font-size: .9rem;
+    }
+    .testi-name  { color: #fff; font-weight: 600; font-size: .88rem; }
+    .testi-role  { color: rgba(255,255,255,.4); font-size: .76rem; }
+
+    /* ─── CONTACT ─── */
+    #contact { background: var(--light); }
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: 3rem; margin-top: 3rem; align-items: start;
+    }
+    .contact-info { display: flex; flex-direction: column; gap: 1.4rem; }
+    .cinfo-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .cinfo-icon {
+      width: 44px; height: 44px; border-radius: 8px;
+      background: var(--sand); display: flex; align-items: center;
+      justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .cinfo-label { font-size: .76rem; color: #889; margin-bottom: .2rem; }
+    .cinfo-val   { font-weight: 600; font-size: .92rem; color: var(--dark); }
+
+    .contact-form {
+      background: #fff; border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem;
+    }
+    .contact-form h3 { font-family:'Cairo',sans-serif; font-weight:700; font-size:1.05rem; margin-bottom:1.5rem; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid rgba(201,168,76,.2);
+      padding: 3rem 2rem 1.5rem;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2.5rem;
+    }
+    .footer-brand p  { color: rgba(255,255,255,.45); font-size: .85rem; line-height: 1.8; margin-top: .8rem; max-width: 260px; }
+    .footer-col h4   { color: var(--gold); font-size: .82rem; font-weight: 700; letter-spacing: .08em; margin-bottom: 1rem; text-transform: uppercase; }
+    .footer-col ul   { list-style: none; display: flex; flex-direction: column; gap: .6rem; }
+    .footer-col li a { color: rgba(255,255,255,.5); font-size: .85rem; text-decoration: none; transition: color .2s; }
+    .footer-col li a:hover { color: var(--gold); }
+    .footer-bottom {
+      max-width: 1100px; margin: 2.5rem auto 0;
+      padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,.08);
+      display: flex; justify-content: space-between; align-items: center;
+      color: rgba(255,255,255,.3); font-size: .78rem;
+    }
+
+    /* ─── SUCCESS TOAST ─── */
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+      background: var(--green); color: #fff; padding: .9rem 2rem;
+      border-radius: 8px; font-weight: 600; font-size: .92rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,.25);
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+      z-index: 999;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 900px) {
+      .hero-inner  { grid-template-columns: 1fr; gap: 2rem; }
+      .hero-visual { display: none; }
+      .stats-inner { grid-template-columns: repeat(2,1fr); }
+      .steps       { grid-template-columns: 1fr; }
+      .services-grid { grid-template-columns: 1fr; }
+      .upload-wrap { grid-template-columns: 1fr; }
+      .testi-grid  { grid-template-columns: 1fr; }
+      .contact-grid{ grid-template-columns: 1fr; }
+      .footer-inner{ grid-template-columns: 1fr 1fr; }
+      .nav-links, .nav-cta { display: none; }
+    }
+    @media (max-width: 480px) {
+      .form-row { grid-template-columns: 1fr; }
+      .stats-inner { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-icon">و</div>
+    <div>
+      <div class="nav-logo-text">وسيط</div>
+      <div class="nav-logo-sub">WASEET · موريتانيا</div>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">كيف يعمل</a></li>
+    <li><a href="#services">خدماتنا</a></li>
+    <li><a href="#upload">رفع الملف</a></li>
+    <li><a href="#contact">تواصل معنا</a></li>
+  </ul>
+  <a href="#upload" class="nav-cta">ابدأ الآن</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-pattern"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-tag">🇲🇷 موريتانيا · نواكشوط</div>
+      <h1 class="hero-h1">نربط <span>المواهب</span><br/>بالفرص الحقيقية</h1>
+      <p class="hero-p">
+        وسيط هي منصتك الموثوقة للتوظيف في موريتانيا — تربط الباحثين عن عمل بالشركات الباحثة عن كفاءات، بسرعة وشفافية واحترافية.
+      </p>
+      <div class="hero-btns">
+        <a href="#upload" class="btn-primary">أرفع ملفك الآن</a>
+        <a href="#how"    class="btn-outline">كيف يعمل الموقع؟</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hcard">
+        <div class="hcard-icon">💼</div>
+        <div>
+          <div class="hcard-title">مهندس برمجيات</div>
+          <div class="hcard-sub">خبرة ٣ سنوات · نواكشوط</div>
+        </div>
+        <div class="hcard-badge">متاح</div>
+      </div>
+      <div class="hcard">
+        <div class="hcard-icon">🏗️</div>
+        <div>
+          <div class="hcard-title">مهندس مدني</div>
+          <div class="hcard-sub">خبرة ٥ سنوات · نواذيبو</div>
+        </div>
+        <div class="hcard-badge">متاح</div>
+      </div>
+      <div class="hcard">
+        <div class="hcard-icon">📊</div>
+        <div>
+          <div class="hcard-title">محاسب قانوني</div>
+          <div class="hcard-sub">خبرة ٤ سنوات · نواكشوط</div>
+        </div>
+        <div class="hcard-badge">متاح</div>
+      </div>
+      <div class="hcard" style="border-color:rgba(201,168,76,.4);">
+        <div class="hcard-icon">🏢</div>
+        <div>
+          <div class="hcard-title">شركة البناء الذهبي</div>
+          <div class="hcard-sub">تبحث عن ٣ موظفين</div>
+        </div>
+        <div class="hcard-badge" style="background:rgba(201,168,76,.25);color:var(--gold);">شركة</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<div id="stats">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-num">+٥٠٠</div>
+      <div class="stat-label">باحث عن عمل مسجّل</div>
+    </div>
+    <div>
+      <div class="stat-num">+١٢٠</div>
+      <div class="stat-label">شركة شريكة</div>
+    </div>
+    <div>
+      <div class="stat-num">+٢٠٠</div>
+      <div class="stat-label">توظيف ناجح</div>
+    </div>
+    <div>
+      <div class="stat-num">٩٥٪</div>
+      <div class="stat-label">نسبة رضا العملاء</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how">
+  <div class="section-inner">
+    <span class="section-eyebrow">كيف يعمل</span>
+    <h2 class="section-h2">ثلاث خطوات وأنت في العمل</h2>
+    <p class="section-p">عملية بسيطة وسريعة تضمن وصولك للفرصة المناسبة أو الكفاءة التي تبحث عنها.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">١</div>
+        <div class="step-icon">📄</div>
+        <h3>أرفع ملفك أو طلبك</h3>
+        <p>سجّل بياناتك وأرفع سيرتك الذاتية أو طلب التوظيف مباشرة عبر المنصة بكل سهولة.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">٢</div>
+        <div class="step-icon">🔍</div>
+        <h3>وسيط يراجع ويُطابق</h3>
+        <p>فريقنا يراجع الملفات ويطابق الباحثين عن عمل مع الشركات المناسبة بدقة واحترافية.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">٣</div>
+        <div class="step-icon">🤝</div>
+        <h3>التواصل والتوظيف</h3>
+        <p>نتولى التواصل بينك وبين الطرف الآخر وندعمك حتى تُبرم الاتفاقية بنجاح.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section id="services">
+  <div class="section-inner">
+    <span class="section-eyebrow">خدماتنا</span>
+    <h2 class="section-h2">نخدم الطرفين بالتساوي</h2>
+    <p class="section-p">سواء كنت تبحث عن وظيفة أو تبحث عن موظفين، وسيط يوفر لك الحل المثالي.</p>
+    <div class="services-grid">
+      <div class="srv-card">
+        <div class="srv-icon">👨‍🎓</div>
+        <div>
+          <h3>للباحثين عن عمل</h3>
+          <p>نساعدك في تقديم ملفك للشركات المناسبة وإعداد سيرتك الذاتية بصورة احترافية تزيد فرص قبولك.</p>
+        </div>
+      </div>
+      <div class="srv-card">
+        <div class="srv-icon">🏢</div>
+        <div>
+          <h3>للشركات والمؤسسات</h3>
+          <p>نوفر لك قاعدة بيانات من الكفاءات المؤهلة ونختار لك الأنسب وفق متطلباتك بدون عناء البحث.</p>
+        </div>
+      </div>
+      <div class="srv-card">
+        <div class="srv-icon">📋</div>
+        <div>
+          <h3>إعداد السيرة الذاتية</h3>
+          <p>خدمة احترافية لإعداد وتصميم السيرة الذاتية بمستوى دولي يليق بطموحاتك المهنية.</p>
+        </div>
+      </div>
+      <div class="srv-card">
+        <div class="srv-icon">🎓</div>
+        <div>
+          <h3>استشارات مهنية</h3>
+          <p>نقدم استشارات مهنية لمساعدتك في التخطيط لمسارك الوظيفي واختيار الفرص الأنسب لك.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── UPLOAD FORM ── -->
+<section id="upload">
+  <div class="section-inner">
+    <span class="section-eyebrow">رفع الملفات</span>
+    <h2 class="section-h2">ابدأ رحلتك معنا اليوم</h2>
+    <p class="section-p">سواء كنت باحثاً عن عمل أو شركة تبحث عن موظفين، أرسل لنا بياناتك الآن.</p>
+    <div class="upload-wrap">
+      <div class="upload-info">
+        <h3>لماذا تختار وسيط؟</h3>
+        <ul>
+          <li>مراجعة ملفك خلال ٢٤ ساعة</li>
+          <li>ربط مباشر مع الشركات والمؤسسات</li>
+          <li>خدمة متاحة لجميع أنحاء موريتانيا</li>
+          <li>سرية تامة لبياناتك ومعلوماتك</li>
+          <li>فريق متخصص ومحترف لمتابعة ملفك</li>
+          <li>دعم مستمر حتى إبرام العقد</li>
+        </ul>
+      </div>
+
+      <div class="form-card">
+        <h3>أرسل طلبك الآن</h3>
+        <div class="tab-switch">
+          <button class="tab-btn active" onclick="switchTab('jobseeker', this)">🙋 باحث عن عمل</button>
+          <button class="tab-btn" onclick="switchTab('company', this)">🏢 شركة / مؤسسة</button>
+        </div>
+
+        <!-- JOBSEEKER FORM -->
+        <div id="form-jobseeker">
+          <div class="form-row">
+            <div class="form-group">
+              <label>الاسم الكامل</label>
+              <input type="text" placeholder="محمد أحمد..." />
+            </div>
+            <div class="form-group">
+              <label>رقم الهاتف</label>
+              <input type="tel" placeholder="+222 ..." />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>البريد الإلكتروني</label>
+            <input type="email" placeholder="example@email.com" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>المجال المهني</label>
+              <select>
+                <option value="">اختر المجال</option>
+                <option>هندسة وتكنولوجيا</option>
+                <option>محاسبة ومالية</option>
+                <option>طب وصحة</option>
+                <option>تعليم وتدريس</option>
+                <option>قانون</option>
+                <option>تسويق وإعلام</option>
+                <option>بناء وعمارة</option>
+                <option>إدارة أعمال</option>
+                <option>أخرى</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>سنوات الخبرة</label>
+              <select>
+                <option>حديث التخرج</option>
+                <option>أقل من سنة</option>
+                <option>١–٣ سنوات</option>
+                <option>٣–٥ سنوات</option>
+                <option>٥–١٠ سنوات</option>
+                <option>أكثر من ١٠ سنوات</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>نبذة مختصرة عنك</label>
+            <textarea placeholder="اكتب نبذة قصيرة عن مهاراتك وما تبحث عنه..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>السيرة الذاتية (PDF أو Word)</label>
+            <div class="file-drop" onclick="document.getElementById('file-input').click()">
+              <div class="file-drop-icon">📎</div>
+              <p>اسحب ملفك هنا أو <span>انقر للاختيار</span></p>
+              <p style="font-size:.75rem;margin-top:.3rem;">PDF, DOC, DOCX – بحد أقصى 5MB</p>
+              <div class="file-chosen" id="file-name"></div>
+            </div>
+            <input type="file" id="file-input" accept=".pdf,.doc,.docx" onchange="showFileName(this)" />
+          </div>
+          <button class="submit-btn" onclick="submitForm()">إرسال الطلب ✉️</button>
+        </div>
+
+        <!-- COMPANY FORM -->
+        <div id="form-company" style="display:none;">
+          <div class="form-row">
+            <div class="form-group">
+              <label>اسم الشركة / المؤسسة</label>
+              <input type="text" placeholder="شركة النجاح..." />
+            </div>
+            <div class="form-group">
+              <label>رقم التسجيل التجاري</label>
+              <input type="text" placeholder="اختياري" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>اسم المسؤول</label>
+              <input type="text" placeholder="المسؤول عن التوظيف" />
+            </div>
+            <div class="form-group">
+              <label>رقم الهاتف</label>
+              <input type="tel" placeholder="+222 ..." />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>البريد الإلكتروني</label>
+            <input type="email" placeholder="hr@company.mr" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>المنصب المطلوب</label>
+              <input type="text" placeholder="مثال: محاسب قانوني" />
+            </div>
+            <div class="form-group">
+              <label>عدد الشواغر</label>
+              <input type="number" placeholder="١" min="1" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>تفاصيل الوظيفة والمتطلبات</label>
+            <textarea placeholder="اذكر المؤهلات المطلوبة، الراتب المقترح، طبيعة العمل..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>ملف الوصف الوظيفي (اختياري)</label>
+            <div class="file-drop" onclick="document.getElementById('file-input2').click()">
+              <div class="file-drop-icon">📎</div>
+              <p>اسحب ملف الوصف الوظيفي أو <span>انقر للاختيار</span></p>
+              <div class="file-chosen" id="file-name2"></div>
+            </div>
+            <input type="file" id="file-input2" accept=".pdf,.doc,.docx" onchange="document.getElementById('file-name2').textContent = this.files[0]?.name || ''" />
+          </div>
+          <button class="submit-btn" onclick="submitForm()">إرسال الطلب ✉️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section id="testimonials">
+  <div class="section-inner">
+    <span class="section-eyebrow" style="color:var(--gold);">آراء عملائنا</span>
+    <h2 class="section-h2">ماذا يقولون عنّا</h2>
+    <p class="section-p">تجارب حقيقية من أشخاص وشركات وثقوا بخدمات وسيط.</p>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">بعد شهور من البحث بمفردي، تواصلت مع وسيط ووجدت وظيفتي في أقل من أسبوعين. خدمة ممتازة وسريعة جداً.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">أ</div>
+          <div>
+            <div class="testi-name">أمينة ولد سيدي</div>
+            <div class="testi-role">مهندسة — نواكشوط</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">نحن شركة متوسطة ونبحث عن موظفين بانتظام. وسيط يوفر علينا الوقت والجهد ويجلب لنا كفاءات حقيقية.</p>
+        <div class="testi-author">
+          <div class="testi-avatar">م</div>
+          <div>
+            <div class="testi-name">محمد سالم</div>
+            <div class="testi-role">مدير موارد بشرية</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">خريج جديد وما كنت أعرف كيف أبدأ. وسيط ساعدني في إعداد ملفي وربطني بشركة رائدة. شكراً جزيلاً!</p>
+        <div class="testi-author">
+          <div class="testi-avatar">إ</div>
+          <div>
+            <div class="testi-name">إبراهيم كان</div>
+            <div class="testi-role">مبرمج — خريج ٢٠٢٤</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<section id="contact">
+  <div class="section-inner">
+    <span class="section-eyebrow">تواصل معنا</span>
+    <h2 class="section-h2">نحن هنا لمساعدتك</h2>
+    <p class="section-p">تواصل معنا مباشرة أو زر مكتبنا في نواكشوط.</p>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="cinfo-item">
+          <div class="cinfo-icon">📍</div>
+          <div>
+            <div class="cinfo-label">العنوان</div>
+            <div class="cinfo-val">نواكشوط، موريتانيا<br/>شارع المدينة — مكتب رقم ١٢</div>
+          </div>
+        </div>
+        <div class="cinfo-item">
+          <div class="cinfo-icon">📞</div>
+          <div>
+            <div class="cinfo-label">الهاتف</div>
+            <div class="cinfo-val">+222 XX XX XX XX</div>
+          </div>
+        </div>
+        <div class="cinfo-item">
+          <div class="cinfo-icon">✉️</div>
+          <div>
+            <div class="cinfo-label">البريد الإلكتروني</div>
+            <div class="cinfo-val">contact@waseet.mr</div>
+          </div>
+        </div>
+        <div class="cinfo-item">
+          <div class="cinfo-icon">🕐</div>
+          <div>
+            <div class="cinfo-label">ساعات العمل</div>
+            <div class="cinfo-val">الأحد – الخميس<br/>٨:٠٠ ص – ٥:٠٠ م</div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form">
+        <h3>أرسل لنا رسالة</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>الاسم</label>
+            <input type="text" placeholder="اسمك الكامل" />
+          </div>
+          <div class="form-group">
+            <label>الهاتف أو البريد</label>
+            <input type="text" placeholder="كيف نتواصل معك؟" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>الموضوع</label>
+          <select>
+            <option>استفسار عام</option>
+            <option>أبحث عن عمل</option>
+            <option>أبحث عن موظفين</option>
+            <option>طلب استشارة مهنية</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>رسالتك</label>
+          <textarea placeholder="اكتب رسالتك هنا..." style="min-height:110px;"></textarea>
+        </div>
+        <button class="submit-btn" onclick="submitContact()" style="margin-top:.5rem;">إرسال الرسالة</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-logo" style="text-decoration:none;">
+        <div class="nav-logo-icon">و</div>
+        <div>
+          <div class="nav-logo-text">وسيط – Waseet</div>
+          <div class="nav-logo-sub">موريتانيا</div>
+        </div>
+      </div>
+      <p>منصة التوظيف الأولى في موريتانيا — نربط المواهب بالفرص بثقة واحترافية.</p>
+    </div>
+    <div class="footer-col">
+      <h4>الخدمات</h4>
+      <ul>
+        <li><a href="#upload">رفع السيرة الذاتية</a></li>
+        <li><a href="#services">إعداد السيرة الذاتية</a></li>
+        <li><a href="#services">استشارات مهنية</a></li>
+        <li><a href="#upload">نشر وظيفة</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>الشركة</h4>
+      <ul>
+        <li><a href="#">من نحن</a></li>
+        <li><a href="#">فريقنا</a></li>
+        <li><a href="#">شركاؤنا</a></li>
+        <li><a href="#contact">تواصل معنا</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>تابعنا</h4>
+      <ul>
+        <li><a href="#">فيسبوك</a></li>
+        <li><a href="#">واتساب</a></li>
+        <li><a href="#">لينكدإن</a></li>
+        <li><a href="#">إنستغرام</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 وسيط Waseet. جميع الحقوق محفوظة.</span>
+    <span>نواكشوط، موريتانيا 🇲🇷</span>
+  </div>
+</footer>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">✅ تم إرسال طلبك بنجاح! سنتواصل معك قريباً.</div>
+
+<script>
+  function switchTab(type, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('form-jobseeker').style.display = type === 'jobseeker' ? 'block' : 'none';
+    document.getElementById('form-company').style.display   = type === 'company'    ? 'block' : 'none';
+  }
+
+  function showFileName(input) {
+    document.getElementById('file-name').textContent = input.files[0]?.name || '';
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg || '✅ تم إرسال طلبك بنجاح! سنتواصل معك قريباً.';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  function submitForm()    { showToast('✅ تم إرسال طلبك بنجاح! سيتواصل معك فريق وسيط خلال ٢٤ ساعة.'); }
+  function submitContact() { showToast('✅ وصلت رسالتك! سنرد عليك في أقرب وقت ممكن.'); }
+
+  // Smooth nav highlight
+  const sections = document.querySelectorAll('section[id], div[id]');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY + 80;
+    sections.forEach(s => {
+      const link = document.querySelector(`.nav-links a[href="#${s.id}"]`);
+      if (!link) return;
+      const inView = y >= s.offsetTop && y < s.offsetTop + s.offsetHeight;
+      link.style.color = inView ? 'var(--gold)' : '';
+    });
+  });
+</script>
+</body>
+</html>
+HTMLEOF
+echo "Done"
