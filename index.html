@@ -2,6 +2,7 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>وسيط | Waseet – ربط المواهب بالفرص</title>
@@ -890,7 +891,30 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
       const inView = y >= s.offsetTop && y < s.offsetTop + s.offsetHeight;
       link.style.color = inView ? 'var(--gold)' : '';
     });
-  });
+  }); const supabaseUrl = 'https://xhtafjnysrahqzfzmllu.supabase.co';
+const supabaseKey = 'sb_publishable_VrcvjVscUp7APgReUIbJEA_A2ip6nQt';
+
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+async function submitForm() {
+  const inputs = document.querySelectorAll('#form-jobseeker input');
+
+  const data = {
+    Name: inputs[0].value,
+    phone: inputs[1].value,
+    email: inputs[2].value
+  };
+
+  const { error } = await supabase
+    .from('candidates')
+    .insert([data]);
+
+  if (error) {
+    alert('خطأ: ' + error.message);
+  } else {
+    showToast('✅ تم إرسال الطلب وحفظه في قاعدة البيانات');
+  }
+} 
 </script>
 </body>
 </html>
