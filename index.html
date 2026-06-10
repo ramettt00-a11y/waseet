@@ -894,7 +894,7 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
   }); const supabaseUrl = 'https://xhtafjnysrahqzfzmllu.supabase.co';
 const supabaseKey = 'sb_publishable_VrcvjVscUp7APgReUIbJEA_A2ip6nQt';
 
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 async function submitForm() {
   const inputs = document.querySelectorAll('#form-jobseeker input');
@@ -905,7 +905,7 @@ async function submitForm() {
     email: inputs[2].value
   };
 
-  const { error } = await supabase
+  const { error } = await db
     .from('candidates')
     .insert([data]);
 
