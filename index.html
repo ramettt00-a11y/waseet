@@ -408,7 +408,14 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
     <li><a href="#upload">رفع الملف</a></li>
     <li><a href="#contact">تواصل معنا</a></li>
   </ul>
-  <a href="#upload" class="nav-cta">ابدأ الآن</a>
+ <div style="display:flex;align-items:center;gap:10px;">
+  <button id="langBtn" onclick="toggleLanguage()"
+          style="padding:6px 12px;border:none;border-radius:5px;cursor:pointer;">
+    FR
+  </button>
+
+  <a href="#upload" class="nav-cta" id="startBtn">ابدأ الآن</a>
+</div>
 </nav>
 
 <!-- ── HERO ── -->
@@ -871,7 +878,43 @@ async function submitForm() {
   } else {
     showToast('✅ تم إرسال الطلب وحفظه في قاعدة البيانات');
   }
-} 
+} if (error) {
+    alert('خطأ: ' + error.message);
+  } else {
+    showToast('✅ تم إرسال الطلب وحفظه في قاعدة البيانات');
+  }
+}
+
+// ألصق من هنا
+
+let lang = "ar";
+
+function toggleLanguage() {
+  if (lang === "ar") {
+    lang = "fr";
+
+    document.documentElement.lang = "fr";
+    document.documentElement.dir = "ltr";
+
+    document.getElementById("langBtn").textContent = "AR";
+    document.getElementById("startBtn").textContent = "Commencer";
+
+  } else {
+    lang = "ar";
+
+    document.documentElement.lang = "ar";
+    document.documentElement.dir = "rtl";
+
+    document.getElementById("langBtn").textContent = "FR";
+    document.getElementById("startBtn").textContent = "ابدأ الآن";
+  }
+}
+
+// إلى هنا
+
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
