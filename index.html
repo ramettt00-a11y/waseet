@@ -1,11 +1,10 @@
-cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="html-root">
 <head>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>منصة وسيط للتوظيف</title>
+  <title id="page-title">منصة وسيط للتوظيف</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -27,8 +26,9 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
       font-family: 'Tajawal', sans-serif;
       background: var(--light);
       color: var(--text);
-      direction: rtl;
     }
+
+    body.lang-fr { font-family: 'Tajawal', 'Segoe UI', sans-serif; }
 
     /* ─── NAV ─── */
     nav {
@@ -56,9 +56,11 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
     .nav-logo-text { color: #fff; font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 1.15rem; }
     .nav-logo-sub  { color: var(--gold); font-size: .72rem; letter-spacing: .06em; }
 
-    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; align-items: center; }
     .nav-links a { color: rgba(255,255,255,.8); text-decoration: none; font-size: .9rem; transition: color .2s; }
     .nav-links a:hover { color: var(--gold); }
+
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
 
     .nav-cta {
       background: var(--gold); color: var(--dark);
@@ -67,6 +69,22 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
       transition: opacity .2s;
     }
     .nav-cta:hover { opacity: .85; }
+
+    .lang-toggle {
+      display: flex; align-items: center;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 2rem; padding: .2rem;
+      gap: .2rem;
+    }
+    .lang-btn {
+      border: none; background: transparent; cursor: pointer;
+      color: rgba(255,255,255,.6); font-family: 'Cairo', sans-serif;
+      font-weight: 700; font-size: .78rem; padding: .35rem .75rem;
+      border-radius: 2rem; transition: all .2s;
+    }
+    .lang-btn.active { background: var(--gold); color: var(--dark); }
+    .lang-toggle-mobile { display: none; }
 
     /* ─── HERO ─── */
     #hero {
@@ -150,6 +168,7 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
       color: #7FFFC4; font-size: .72rem; padding: .25rem .7rem;
       border-radius: 2rem; white-space: nowrap;
     }
+    html[dir="ltr"] .hcard-badge { margin-right: 0; margin-left: auto; }
 
     /* ─── STATS ─── */
     #stats {
@@ -383,7 +402,9 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
       .testi-grid  { grid-template-columns: 1fr; }
       .contact-grid{ grid-template-columns: 1fr; }
       .footer-inner{ grid-template-columns: 1fr 1fr; }
-      .nav-links, .nav-cta { display: none; }
+      .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .lang-toggle-mobile { display: flex; }
     }
     @media (max-width: 480px) {
       .form-row { grid-template-columns: 1fr; }
@@ -399,23 +420,26 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
     <div class="nav-logo-icon">و</div>
     <div>
       <div class="nav-logo-text">وسيط</div>
-      <div class="nav-logo-sub">WASEET · موريتانيا</div>
+      <div class="nav-logo-sub">WASEET · <span data-i18n="nav.country">موريتانيا</span></div>
     </div>
   </a>
   <ul class="nav-links">
-    <li><a href="#how">كيف يعمل</a></li>
-    <li><a href="#services">خدماتنا</a></li>
-    <li><a href="#upload">رفع الملف</a></li>
-    <li><a href="#contact">تواصل معنا</a></li>
+    <li><a href="#how" data-i18n="nav.how">كيف يعمل</a></li>
+    <li><a href="#services" data-i18n="nav.services">خدماتنا</a></li>
+    <li><a href="#upload" data-i18n="nav.upload">رفع الملف</a></li>
+    <li><a href="#contact" data-i18n="nav.contact">تواصل معنا</a></li>
   </ul>
- <div style="display:flex;align-items:center;gap:10px;">
-  <button id="langBtn" onclick="toggleLanguage()"
-          style="padding:6px 12px;border:none;border-radius:5px;cursor:pointer;">
-    FR
-  </button>
-
-  <a href="#upload" class="nav-cta" id="startBtn">ابدأ الآن</a>
-</div>
+  <div class="nav-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-btn-ar" onclick="setLanguage('ar')">AR</button>
+      <button class="lang-btn" id="lang-btn-fr" onclick="setLanguage('fr')">FR</button>
+    </div>
+    <a href="#upload" class="nav-cta" data-i18n="nav.start">ابدأ الآن</a>
+  </div>
+  <div class="lang-toggle lang-toggle-mobile">
+    <button class="lang-btn active" id="lang-btn-ar-m" onclick="setLanguage('ar')">AR</button>
+    <button class="lang-btn" id="lang-btn-fr-m" onclick="setLanguage('fr')">FR</button>
+  </div>
 </nav>
 
 <!-- ── HERO ── -->
@@ -424,48 +448,48 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
   <div class="hero-pattern"></div>
   <div class="hero-inner">
     <div class="hero-content">
-      <div class="hero-tag">🇲🇷 موريتانيا · نواكشوط</div>
-      <h1 class="hero-h1">نربط <span>المواهب</span><br/>بالفرص الحقيقية</h1>
-      <p class="hero-p">
+      <div class="hero-tag" data-i18n="hero.tag">🇲🇷 موريتانيا · نواكشوط</div>
+      <h1 class="hero-h1" data-i18n="hero.h1">نربط <span>المواهب</span><br/>بالفرص الحقيقية</h1>
+      <p class="hero-p" data-i18n="hero.p">
         وسيط هي منصتك الموثوقة للتوظيف في موريتانيا — تربط الباحثين عن عمل بالشركات الباحثة عن كفاءات، بسرعة وشفافية واحترافية.
       </p>
       <div class="hero-btns">
-        <a href="#upload" class="btn-primary">أرفع ملفك الآن</a>
-        <a href="#how"    class="btn-outline">كيف يعمل الموقع؟</a>
+        <a href="#upload" class="btn-primary" data-i18n="hero.btn1">أرفع ملفك الآن</a>
+        <a href="#how"    class="btn-outline" data-i18n="hero.btn2">كيف يعمل الموقع؟</a>
       </div>
     </div>
     <div class="hero-visual">
       <div class="hcard">
         <div class="hcard-icon">💼</div>
         <div>
-          <div class="hcard-title">مهندس برمجيات</div>
-          <div class="hcard-sub">خبرة ٣ سنوات · نواكشوط</div>
+          <div class="hcard-title" data-i18n="hero.card1.title">مهندس برمجيات</div>
+          <div class="hcard-sub" data-i18n="hero.card1.sub">خبرة ٣ سنوات · نواكشوط</div>
         </div>
-        <div class="hcard-badge">متاح</div>
+        <div class="hcard-badge" data-i18n="hero.available">متاح</div>
       </div>
       <div class="hcard">
         <div class="hcard-icon">🏗️</div>
         <div>
-          <div class="hcard-title">مهندس مدني</div>
-          <div class="hcard-sub">خبرة ٥ سنوات · نواذيبو</div>
+          <div class="hcard-title" data-i18n="hero.card2.title">مهندس مدني</div>
+          <div class="hcard-sub" data-i18n="hero.card2.sub">خبرة ٥ سنوات · نواذيبو</div>
         </div>
-        <div class="hcard-badge">متاح</div>
+        <div class="hcard-badge" data-i18n="hero.available">متاح</div>
       </div>
       <div class="hcard">
         <div class="hcard-icon">📊</div>
         <div>
-          <div class="hcard-title">محاسب قانوني</div>
-          <div class="hcard-sub">خبرة ٤ سنوات · نواكشوط</div>
+          <div class="hcard-title" data-i18n="hero.card3.title">محاسب قانوني</div>
+          <div class="hcard-sub" data-i18n="hero.card3.sub">خبرة ٤ سنوات · نواكشوط</div>
         </div>
-        <div class="hcard-badge">متاح</div>
+        <div class="hcard-badge" data-i18n="hero.available">متاح</div>
       </div>
       <div class="hcard" style="border-color:rgba(201,168,76,.4);">
         <div class="hcard-icon">🏢</div>
         <div>
-          <div class="hcard-title">شركة البناء الذهبي</div>
-          <div class="hcard-sub">تبحث عن ٣ موظفين</div>
+          <div class="hcard-title" data-i18n="hero.card4.title">شركة البناء الذهبي</div>
+          <div class="hcard-sub" data-i18n="hero.card4.sub">تبحث عن ٣ موظفين</div>
         </div>
-        <div class="hcard-badge" style="background:rgba(201,168,76,.25);color:var(--gold);">شركة</div>
+        <div class="hcard-badge" style="background:rgba(201,168,76,.25);color:var(--gold);" data-i18n="hero.company">شركة</div>
       </div>
     </div>
   </div>
@@ -475,20 +499,20 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
 <div id="stats">
   <div class="stats-inner">
     <div>
-      <div class="stat-num">+٥٠٠</div>
-      <div class="stat-label">باحث عن عمل مسجّل</div>
+      <div class="stat-num" data-i18n="stats.n1">+٥٠٠</div>
+      <div class="stat-label" data-i18n="stats.l1">باحث عن عمل مسجّل</div>
     </div>
     <div>
-      <div class="stat-num">+١٢٠</div>
-      <div class="stat-label">شركة شريكة</div>
+      <div class="stat-num" data-i18n="stats.n2">+١٢٠</div>
+      <div class="stat-label" data-i18n="stats.l2">شركة شريكة</div>
     </div>
     <div>
-      <div class="stat-num">+٢٠٠</div>
-      <div class="stat-label">توظيف ناجح</div>
+      <div class="stat-num" data-i18n="stats.n3">+٢٠٠</div>
+      <div class="stat-label" data-i18n="stats.l3">توظيف ناجح</div>
     </div>
     <div>
-      <div class="stat-num">٩٥٪</div>
-      <div class="stat-label">نسبة رضا العملاء</div>
+      <div class="stat-num" data-i18n="stats.n4">٩٥٪</div>
+      <div class="stat-label" data-i18n="stats.l4">نسبة رضا العملاء</div>
     </div>
   </div>
 </div>
@@ -496,27 +520,27 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
 <!-- ── HOW IT WORKS ── -->
 <section id="how">
   <div class="section-inner">
-    <span class="section-eyebrow">كيف يعمل</span>
-    <h2 class="section-h2">ثلاث خطوات وأنت في العمل</h2>
-    <p class="section-p">عملية بسيطة وسريعة تضمن وصولك للفرصة المناسبة أو الكفاءة التي تبحث عنها.</p>
+    <span class="section-eyebrow" data-i18n="how.eyebrow">كيف يعمل</span>
+    <h2 class="section-h2" data-i18n="how.h2">ثلاث خطوات وأنت في العمل</h2>
+    <p class="section-p" data-i18n="how.p">عملية بسيطة وسريعة تضمن وصولك للفرصة المناسبة أو الكفاءة التي تبحث عنها.</p>
     <div class="steps">
       <div class="step">
         <div class="step-num">١</div>
         <div class="step-icon">📄</div>
-        <h3>أرفع ملفك أو طلبك</h3>
-        <p>سجّل بياناتك وأرفع سيرتك الذاتية أو طلب التوظيف مباشرة عبر المنصة بكل سهولة.</p>
+        <h3 data-i18n="how.s1.title">أرفع ملفك أو طلبك</h3>
+        <p data-i18n="how.s1.p">سجّل بياناتك وأرفع سيرتك الذاتية أو طلب التوظيف مباشرة عبر المنصة بكل سهولة.</p>
       </div>
       <div class="step">
         <div class="step-num">٢</div>
         <div class="step-icon">🔍</div>
-        <h3>وسيط يراجع ويُطابق</h3>
-        <p>فريقنا يراجع الملفات ويطابق الباحثين عن عمل مع الشركات المناسبة بدقة واحترافية.</p>
+        <h3 data-i18n="how.s2.title">وسيط يراجع ويُطابق</h3>
+        <p data-i18n="how.s2.p">فريقنا يراجع الملفات ويطابق الباحثين عن عمل مع الشركات المناسبة بدقة واحترافية.</p>
       </div>
       <div class="step">
         <div class="step-num">٣</div>
         <div class="step-icon">🤝</div>
-        <h3>التواصل والتوظيف</h3>
-        <p>نتولى التواصل بينك وبين الطرف الآخر وندعمك حتى تُبرم الاتفاقية بنجاح.</p>
+        <h3 data-i18n="how.s3.title">التواصل والتوظيف</h3>
+        <p data-i18n="how.s3.p">نتولى التواصل بينك وبين الطرف الآخر وندعمك حتى تُبرم الاتفاقية بنجاح.</p>
       </div>
     </div>
   </div>
@@ -525,36 +549,36 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
 <!-- ── SERVICES ── -->
 <section id="services">
   <div class="section-inner">
-    <span class="section-eyebrow">خدماتنا</span>
-    <h2 class="section-h2">نخدم الطرفين بالتساوي</h2>
-    <p class="section-p">سواء كنت تبحث عن وظيفة أو تبحث عن موظفين، وسيط يوفر لك الحل المثالي.</p>
+    <span class="section-eyebrow" data-i18n="services.eyebrow">خدماتنا</span>
+    <h2 class="section-h2" data-i18n="services.h2">نخدم الطرفين بالتساوي</h2>
+    <p class="section-p" data-i18n="services.p">سواء كنت تبحث عن وظيفة أو تبحث عن موظفين، وسيط يوفر لك الحل المثالي.</p>
     <div class="services-grid">
       <div class="srv-card">
         <div class="srv-icon">👨‍🎓</div>
         <div>
-          <h3>للباحثين عن عمل</h3>
-          <p>نساعدك في تقديم ملفك للشركات المناسبة وإعداد سيرتك الذاتية بصورة احترافية تزيد فرص قبولك.</p>
+          <h3 data-i18n="services.s1.title">للباحثين عن عمل</h3>
+          <p data-i18n="services.s1.p">نساعدك في تقديم ملفك للشركات المناسبة وإعداد سيرتك الذاتية بصورة احترافية تزيد فرص قبولك.</p>
         </div>
       </div>
       <div class="srv-card">
         <div class="srv-icon">🏢</div>
         <div>
-          <h3>للشركات والمؤسسات</h3>
-          <p>نوفر لك قاعدة بيانات من الكفاءات المؤهلة ونختار لك الأنسب وفق متطلباتك بدون عناء البحث.</p>
+          <h3 data-i18n="services.s2.title">للشركات والمؤسسات</h3>
+          <p data-i18n="services.s2.p">نوفر لك قاعدة بيانات من الكفاءات المؤهلة ونختار لك الأنسب وفق متطلباتك بدون عناء البحث.</p>
         </div>
       </div>
       <div class="srv-card">
         <div class="srv-icon">📋</div>
         <div>
-          <h3>إعداد السيرة الذاتية</h3>
-          <p>خدمة احترافية لإعداد وتصميم السيرة الذاتية بمستوى دولي يليق بطموحاتك المهنية.</p>
+          <h3 data-i18n="services.s3.title">إعداد السيرة الذاتية</h3>
+          <p data-i18n="services.s3.p">خدمة احترافية لإعداد وتصميم السيرة الذاتية بمستوى دولي يليق بطموحاتك المهنية.</p>
         </div>
       </div>
       <div class="srv-card">
         <div class="srv-icon">🎓</div>
         <div>
-          <h3>استشارات مهنية</h3>
-          <p>نقدم استشارات مهنية لمساعدتك في التخطيط لمسارك الوظيفي واختيار الفرص الأنسب لك.</p>
+          <h3 data-i18n="services.s4.title">استشارات مهنية</h3>
+          <p data-i18n="services.s4.p">نقدم استشارات مهنية لمساعدتك في التخطيط لمسارك الوظيفي واختيار الفرص الأنسب لك.</p>
         </div>
       </div>
     </div>
@@ -564,210 +588,210 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
 <!-- ── UPLOAD FORM ── -->
 <section id="upload">
   <div class="section-inner">
-    <span class="section-eyebrow">رفع الملفات</span>
-    <h2 class="section-h2">ابدأ رحلتك معنا اليوم</h2>
-    <p class="section-p">سواء كنت باحثاً عن عمل أو شركة تبحث عن موظفين، أرسل لنا بياناتك الآن.</p>
+    <span class="section-eyebrow" data-i18n="upload.eyebrow">رفع الملفات</span>
+    <h2 class="section-h2" data-i18n="upload.h2">ابدأ رحلتك معنا اليوم</h2>
+    <p class="section-p" data-i18n="upload.p">سواء كنت باحثاً عن عمل أو شركة تبحث عن موظفين، أرسل لنا بياناتك الآن.</p>
     <div class="upload-wrap">
       <div class="upload-info">
-        <h3>لماذا تختار وسيط؟</h3>
+        <h3 data-i18n="upload.why">لماذا تختار وسيط؟</h3>
         <ul>
-          <li>مراجعة ملفك خلال ٢٤ ساعة</li>
-          <li>ربط مباشر مع الشركات والمؤسسات</li>
-          <li>خدمة متاحة لجميع أنحاء موريتانيا</li>
-          <li>سرية تامة لبياناتك ومعلوماتك</li>
-          <li>فريق متخصص ومحترف لمتابعة ملفك</li>
-          <li>دعم مستمر حتى إبرام العقد</li>
+          <li data-i18n="upload.li1">مراجعة ملفك خلال ٢٤ ساعة</li>
+          <li data-i18n="upload.li2">ربط مباشر مع الشركات والمؤسسات</li>
+          <li data-i18n="upload.li3">خدمة متاحة لجميع أنحاء موريتانيا</li>
+          <li data-i18n="upload.li4">سرية تامة لبياناتك ومعلوماتك</li>
+          <li data-i18n="upload.li5">فريق متخصص ومحترف لمتابعة ملفك</li>
+          <li data-i18n="upload.li6">دعم مستمر حتى إبرام العقد</li>
         </ul>
       </div>
 
       <div class="form-card">
-        <h3>أرسل طلبك الآن</h3>
+        <h3 data-i18n="upload.sendNow">أرسل طلبك الآن</h3>
         <div class="tab-switch">
-          <button class="tab-btn active" onclick="switchTab('jobseeker', this)">🙋 باحث عن عمل</button>
-          <button class="tab-btn" onclick="switchTab('company', this)">🏢 شركة / مؤسسة</button>
+          <button class="tab-btn active" onclick="switchTab('jobseeker', this)"><span data-i18n="upload.tab.jobseeker">🙋 باحث عن عمل</span></button>
+          <button class="tab-btn" onclick="switchTab('company', this)"><span data-i18n="upload.tab.company">🏢 شركة / مؤسسة</span></button>
         </div>
 
         <!-- JOBSEEKER FORM -->
         <div id="form-jobseeker">
           <div class="form-row">
             <div class="form-group">
-              <label>الاسم الكامل</label>
-              <input type="text" placeholder="محمد أحمد..." />
+              <label data-i18n="upload.js.name">الاسم الكامل</label>
+              <input type="text" data-i18n-ph="upload.js.namePh" placeholder="محمد أحمد..." />
             </div>
             <div class="form-group">
-              <label>رقم الهاتف</label>
-              <input type="tel" placeholder="+222 ..." />
+              <label data-i18n="upload.js.phone">رقم الهاتف</label>
+              <input type="tel" data-i18n-ph="upload.js.phonePh" placeholder="+222 ..." />
             </div>
           </div>
           <div class="form-group">
-            <label>البريد الإلكتروني</label>
+            <label data-i18n="upload.js.email">البريد الإلكتروني</label>
             <input type="email" placeholder="example@email.com" />
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>المجال المهني</label>
+              <label data-i18n="upload.js.field">المجال المهني</label>
               <select>
-                <option value="">اختر المجال</option>
-                <option>هندسة وتكنولوجيا</option>
-                <option>محاسبة ومالية</option>
-                <option>طب وصحة</option>
-                <option>تعليم وتدريس</option>
-                <option>قانون</option>
-                <option>تسويق وإعلام</option>
-                <option>بناء وعمارة</option>
-                <option>إدارة أعمال</option>
-                <option>أخرى</option>
+                <option value="" data-i18n="upload.js.fieldChoose">اختر المجال</option>
+                <option data-i18n="upload.js.field1">هندسة وتكنولوجيا</option>
+                <option data-i18n="upload.js.field2">محاسبة ومالية</option>
+                <option data-i18n="upload.js.field3">طب وصحة</option>
+                <option data-i18n="upload.js.field4">تعليم وتدريس</option>
+                <option data-i18n="upload.js.field5">قانون</option>
+                <option data-i18n="upload.js.field6">تسويق وإعلام</option>
+                <option data-i18n="upload.js.field7">بناء وعمارة</option>
+                <option data-i18n="upload.js.field8">إدارة أعمال</option>
+                <option data-i18n="upload.js.field9">أخرى</option>
               </select>
             </div>
             <div class="form-group">
-              <label>سنوات الخبرة</label>
+              <label data-i18n="upload.js.exp">سنوات الخبرة</label>
               <select>
-                <option>حديث التخرج</option>
-                <option>أقل من سنة</option>
-                <option>١–٣ سنوات</option>
-                <option>٣–٥ سنوات</option>
-                <option>٥–١٠ سنوات</option>
-                <option>أكثر من ١٠ سنوات</option>
+                <option data-i18n="upload.js.exp1">حديث التخرج</option>
+                <option data-i18n="upload.js.exp2">أقل من سنة</option>
+                <option data-i18n="upload.js.exp3">١–٣ سنوات</option>
+                <option data-i18n="upload.js.exp4">٣–٥ سنوات</option>
+                <option data-i18n="upload.js.exp5">٥–١٠ سنوات</option>
+                <option data-i18n="upload.js.exp6">أكثر من ١٠ سنوات</option>
               </select>
             </div>
           </div>
           <div class="form-group">
-            <label>نبذة مختصرة عنك</label>
-            <textarea placeholder="اكتب نبذة قصيرة عن مهاراتك وما تبحث عنه..."></textarea>
+            <label data-i18n="upload.js.bio">نبذة مختصرة عنك</label>
+            <textarea data-i18n-ph="upload.js.bioPh" placeholder="اكتب نبذة قصيرة عن مهاراتك وما تبحث عنه..."></textarea>
           </div>
           <div class="form-group">
-            <label>السيرة الذاتية (PDF أو Word)</label>
+            <label data-i18n="upload.js.cv">السيرة الذاتية (PDF أو Word)</label>
             <div class="file-drop" onclick="document.getElementById('file-input').click()">
               <div class="file-drop-icon">📎</div>
-              <p>اسحب ملفك هنا أو <span>انقر للاختيار</span></p>
-              <p style="font-size:.75rem;margin-top:.3rem;">PDF, DOC, DOCX – بحد أقصى 5MB</p>
+              <p><span data-i18n="upload.js.dropBefore">اسحب ملفك هنا أو</span> <span data-i18n="upload.js.dropLink">انقر للاختيار</span></p>
+              <p style="font-size:.75rem;margin-top:.3rem;" data-i18n="upload.js.dropHint">PDF, DOC, DOCX – بحد أقصى 5MB</p>
               <div class="file-chosen" id="file-name"></div>
             </div>
             <input type="file" id="file-input" accept=".pdf,.doc,.docx" onchange="showFileName(this)" />
           </div>
-         <button class="submit-btn" onclick="submitCompany()">إرسال طلب التوظيف 🏢</button>
+         <button class="submit-btn" onclick="submitForm()" data-i18n="upload.js.submit">إرسال طلب التوظيف 🏢</button>
         </div>
 
         <!-- COMPANY FORM -->
         <div id="form-company" style="display:none;">
           <div class="form-row">
             <div class="form-group">
-              <label>اسم الشركة / المؤسسة</label>
-              <input type="text" placeholder="شركة النجاح..." />
+              <label data-i18n="upload.co.name">اسم الشركة / المؤسسة</label>
+              <input type="text" data-i18n-ph="upload.co.namePh" placeholder="شركة النجاح..." />
             </div>
             <div class="form-group">
-              <label>رقم التسجيل التجاري</label>
-              <input type="text" placeholder="اختياري" />
+              <label data-i18n="upload.co.reg">رقم التسجيل التجاري</label>
+              <input type="text" data-i18n-ph="upload.co.regPh" placeholder="اختياري" />
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>اسم المسؤول</label>
-              <input type="text" placeholder="المسؤول عن التوظيف" />
+              <label data-i18n="upload.co.contact">اسم المسؤول</label>
+              <input type="text" data-i18n-ph="upload.co.contactPh" placeholder="المسؤول عن التوظيف" />
             </div>
             <div class="form-group">
-              <label>رقم الهاتف</label>
-              <input type="tel" placeholder="+222 ..." />
+              <label data-i18n="upload.co.phone">رقم الهاتف</label>
+              <input type="tel" data-i18n-ph="upload.co.phonePh" placeholder="+222 ..." />
             </div>
           </div>
           <div class="form-group">
-            <label>البريد الإلكتروني</label>
+            <label data-i18n="upload.co.email">البريد الإلكتروني</label>
             <input type="email" placeholder="hr@company.mr" />
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>المنصب المطلوب</label>
-              <input type="text" placeholder="مثال: محاسب قانوني" />
+              <label data-i18n="upload.co.position">المنصب المطلوب</label>
+              <input type="text" data-i18n-ph="upload.co.positionPh" placeholder="مثال: محاسب قانوني" />
             </div>
             <div class="form-group">
-              <label>عدد الشواغر</label>
-              <input type="number" placeholder="١" min="1" />
+              <label data-i18n="upload.co.vacancies">عدد الشواغر</label>
+              <input type="number" data-i18n-ph="upload.co.vacanciesPh" placeholder="١" min="1" />
             </div>
           </div>
           <div class="form-group">
-            <label>تفاصيل الوظيفة والمتطلبات</label>
-            <textarea placeholder="اذكر المؤهلات المطلوبة، الراتب المقترح، طبيعة العمل..."></textarea>
+            <label data-i18n="upload.co.details">تفاصيل الوظيفة والمتطلبات</label>
+            <textarea data-i18n-ph="upload.co.detailsPh" placeholder="اذكر المؤهلات المطلوبة، الراتب المقترح، طبيعة العمل..."></textarea>
           </div>
           <div class="form-group">
-            <label>ملف الوصف الوظيفي (اختياري)</label>
+            <label data-i18n="upload.co.file">ملف الوصف الوظيفي (اختياري)</label>
             <div class="file-drop" onclick="document.getElementById('file-input2').click()">
               <div class="file-drop-icon">📎</div>
-              <p>اسحب ملف الوصف الوظيفي أو <span>انقر للاختيار</span></p>
+              <p><span data-i18n="upload.co.dropBefore">اسحب ملف الوصف الوظيفي أو</span> <span data-i18n="upload.js.dropLink">انقر للاختيار</span></p>
               <div class="file-chosen" id="file-name2"></div>
             </div>
             <input type="file" id="file-input2" accept=".pdf,.doc,.docx" onchange="document.getElementById('file-name2').textContent = this.files[0]?.name || ''" />
           </div>
-          <button class="submit-btn" onclick="submitForm()">إرسال الطلب ✉️</button>
+          <button class="submit-btn" onclick="submitCompany()" data-i18n="upload.co.submit">إرسال الطلب ✉️</button>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-  
+
 <!-- ── CONTACT ── -->
 <section id="contact">
   <div class="section-inner">
-    <span class="section-eyebrow">تواصل معنا</span>
-    <h2 class="section-h2">نحن هنا لمساعدتك</h2>
-    <p class="section-p">تواصل معنا مباشرة أو زر مكتبنا في نواكشوط.</p>
+    <span class="section-eyebrow" data-i18n="contact.eyebrow">تواصل معنا</span>
+    <h2 class="section-h2" data-i18n="contact.h2">نحن هنا لمساعدتك</h2>
+    <p class="section-p" data-i18n="contact.p">تواصل معنا مباشرة أو زر مكتبنا في نواكشوط.</p>
     <div class="contact-grid">
       <div class="contact-info">
         <div class="cinfo-item">
           <div class="cinfo-icon">📍</div>
           <div>
-            <div class="cinfo-label">العنوان</div>
-            <div class="cinfo-val">نواكشوط، موريتانيا<br/>شارع المدينة — مكتب رقم ١٢</div>
+            <div class="cinfo-label" data-i18n="contact.addrLabel">العنوان</div>
+            <div class="cinfo-val" data-i18n="contact.addrVal">نواكشوط، موريتانيا<br/>شارع المدينة — مكتب رقم ١٢</div>
           </div>
         </div>
         <div class="cinfo-item">
           <div class="cinfo-icon">📞</div>
           <div>
-            <div class="cinfo-label">الهاتف</div>
+            <div class="cinfo-label" data-i18n="contact.phoneLabel">الهاتف</div>
             <div class="cinfo-val">+222 XX XX XX XX</div>
           </div>
         </div>
         <div class="cinfo-item">
           <div class="cinfo-icon">✉️</div>
           <div>
-            <div class="cinfo-label">البريد الإلكتروني</div>
+            <div class="cinfo-label" data-i18n="contact.emailLabel">البريد الإلكتروني</div>
             <div class="cinfo-val">contact@waseet.mr</div>
           </div>
         </div>
         <div class="cinfo-item">
           <div class="cinfo-icon">🕐</div>
           <div>
-            <div class="cinfo-label">ساعات العمل</div>
-            <div class="cinfo-val">الأحد – الخميس<br/>٨:٠٠ ص – ٥:٠٠ م</div>
+            <div class="cinfo-label" data-i18n="contact.hoursLabel">ساعات العمل</div>
+            <div class="cinfo-val" data-i18n="contact.hoursVal">الأحد – الخميس<br/>٨:٠٠ ص – ٥:٠٠ م</div>
           </div>
         </div>
       </div>
       <div class="contact-form">
-        <h3>أرسل لنا رسالة</h3>
+        <h3 data-i18n="contact.sendMsg">أرسل لنا رسالة</h3>
         <div class="form-row">
           <div class="form-group">
-            <label>الاسم</label>
-            <input type="text" placeholder="اسمك الكامل" />
+            <label data-i18n="contact.name">الاسم</label>
+            <input type="text" data-i18n-ph="contact.namePh" placeholder="اسمك الكامل" />
           </div>
           <div class="form-group">
-            <label>الهاتف أو البريد</label>
-            <input type="text" placeholder="كيف نتواصل معك؟" />
+            <label data-i18n="contact.reach">الهاتف أو البريد</label>
+            <input type="text" data-i18n-ph="contact.reachPh" placeholder="كيف نتواصل معك؟" />
           </div>
         </div>
         <div class="form-group">
-          <label>الموضوع</label>
+          <label data-i18n="contact.subject">الموضوع</label>
           <select>
-            <option>استفسار عام</option>
-            <option>أبحث عن عمل</option>
-            <option>أبحث عن موظفين</option>
-            <option>طلب استشارة مهنية</option>
+            <option data-i18n="contact.subj1">استفسار عام</option>
+            <option data-i18n="contact.subj2">أبحث عن عمل</option>
+            <option data-i18n="contact.subj3">أبحث عن موظفين</option>
+            <option data-i18n="contact.subj4">طلب استشارة مهنية</option>
           </select>
         </div>
         <div class="form-group">
-          <label>رسالتك</label>
-          <textarea placeholder="اكتب رسالتك هنا..." style="min-height:110px;"></textarea>
+          <label data-i18n="contact.msg">رسالتك</label>
+          <textarea data-i18n-ph="contact.msgPh" placeholder="اكتب رسالتك هنا..." style="min-height:110px;"></textarea>
         </div>
-        <button class="submit-btn" onclick="submitContact()" style="margin-top:.5rem;">إرسال الرسالة</button>
+        <button class="submit-btn" onclick="submitContact()" style="margin-top:.5rem;" data-i18n="contact.send">إرسال الرسالة</button>
       </div>
     </div>
   </div>
@@ -781,49 +805,360 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
         <div class="nav-logo-icon">و</div>
         <div>
           <div class="nav-logo-text">وسيط – Waseet</div>
-          <div class="nav-logo-sub">موريتانيا</div>
+          <div class="nav-logo-sub" data-i18n="nav.country">موريتانيا</div>
         </div>
       </div>
-      <p>منصة التوظيف الأولى في موريتانيا — نربط المواهب بالفرص بثقة واحترافية.</p>
+      <p data-i18n="footer.tagline">منصة التوظيف الأولى في موريتانيا — نربط المواهب بالفرص بثقة واحترافية.</p>
     </div>
     <div class="footer-col">
-      <h4>الخدمات</h4>
+      <h4 data-i18n="footer.services">الخدمات</h4>
       <ul>
-        <li><a href="#upload">رفع السيرة الذاتية</a></li>
-        <li><a href="#services">إعداد السيرة الذاتية</a></li>
-        <li><a href="#services">استشارات مهنية</a></li>
-        <li><a href="#upload">نشر وظيفة</a></li>
+        <li><a href="#upload" data-i18n="footer.svc1">رفع السيرة الذاتية</a></li>
+        <li><a href="#services" data-i18n="footer.svc2">إعداد السيرة الذاتية</a></li>
+        <li><a href="#services" data-i18n="footer.svc3">استشارات مهنية</a></li>
+        <li><a href="#upload" data-i18n="footer.svc4">نشر وظيفة</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>الشركة</h4>
+      <h4 data-i18n="footer.company">الشركة</h4>
       <ul>
-        <li><a href="#">من نحن</a></li>
-        <li><a href="#">فريقنا</a></li>
-        <li><a href="#">شركاؤنا</a></li>
-        <li><a href="#contact">تواصل معنا</a></li>
+        <li><a href="#" data-i18n="footer.about">من نحن</a></li>
+        <li><a href="#" data-i18n="footer.team">فريقنا</a></li>
+        <li><a href="#" data-i18n="footer.partners">شركاؤنا</a></li>
+        <li><a href="#contact" data-i18n="nav.contact">تواصل معنا</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>تابعنا</h4>
+      <h4 data-i18n="footer.follow">تابعنا</h4>
       <ul>
-        <li><a href="#">فيسبوك</a></li>
-        <li><a href="#">واتساب</a></li>
-        <li><a href="#">لينكدإن</a></li>
-        <li><a href="#">إنستغرام</a></li>
+        <li><a href="#" data-i18n="footer.fb">فيسبوك</a></li>
+        <li><a href="#" data-i18n="footer.wa">واتساب</a></li>
+        <li><a href="#" data-i18n="footer.li">لينكدإن</a></li>
+        <li><a href="#" data-i18n="footer.ig">إنستغرام</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2025 وسيط Waseet. جميع الحقوق محفوظة.</span>
-    <span>نواكشوط، موريتانيا 🇲🇷</span>
+    <span data-i18n="footer.rights">©️ 2025 وسيط Waseet. جميع الحقوق محفوظة.</span>
+    <span data-i18n="footer.locTag">نواكشوط، موريتانيا 🇲🇷</span>
   </div>
 </footer>
 
 <!-- ── TOAST ── -->
-<div class="toast" id="toast">✅ تم إرسال طلبك بنجاح! سنتواصل معك قريباً.</div>
+<div class="toast" id="toast" data-i18n="toast.default">✅ تم إرسال طلبك بنجاح! سنتواصل معك قريباً.</div>
 
 <script>
+  /* ─── TRANSLATIONS ─── */
+  const translations = {
+    ar: {
+      "page.title": "منصة وسيط للتوظيف",
+      "nav.country": "موريتانيا",
+      "nav.how": "كيف يعمل",
+      "nav.services": "خدماتنا",
+      "nav.upload": "رفع الملف",
+      "nav.contact": "تواصل معنا",
+      "nav.start": "ابدأ الآن",
+      "hero.tag": "🇲🇷 موريتانيا · نواكشوط",
+      "hero.h1": "نربط <span>المواهب</span><br/>بالفرص الحقيقية",
+      "hero.p": "وسيط هي منصتك الموثوقة للتوظيف في موريتانيا — تربط الباحثين عن عمل بالشركات الباحثة عن كفاءات، بسرعة وشفافية واحترافية.",
+      "hero.btn1": "أرفع ملفك الآن",
+      "hero.btn2": "كيف يعمل الموقع؟",
+      "hero.card1.title": "مهندس برمجيات",
+      "hero.card1.sub": "خبرة ٣ سنوات · نواكشوط",
+      "hero.card2.title": "مهندس مدني",
+      "hero.card2.sub": "خبرة ٥ سنوات · نواذيبو",
+      "hero.card3.title": "محاسب قانوني",
+      "hero.card3.sub": "خبرة ٤ سنوات · نواكشوط",
+      "hero.card4.title": "شركة البناء الذهبي",
+      "hero.card4.sub": "تبحث عن ٣ موظفين",
+      "hero.available": "متاح",
+      "hero.company": "شركة",
+      "stats.n1": "+٥٠٠", "stats.l1": "باحث عن عمل مسجّل",
+      "stats.n2": "+١٢٠", "stats.l2": "شركة شريكة",
+      "stats.n3": "+٢٠٠", "stats.l3": "توظيف ناجح",
+      "stats.n4": "٩٥٪", "stats.l4": "نسبة رضا العملاء",
+      "how.eyebrow": "كيف يعمل",
+      "how.h2": "ثلاث خطوات وأنت في العمل",
+      "how.p": "عملية بسيطة وسريعة تضمن وصولك للفرصة المناسبة أو الكفاءة التي تبحث عنها.",
+      "how.s1.title": "أرفع ملفك أو طلبك",
+      "how.s1.p": "سجّل بياناتك وأرفع سيرتك الذاتية أو طلب التوظيف مباشرة عبر المنصة بكل سهولة.",
+      "how.s2.title": "وسيط يراجع ويُطابق",
+      "how.s2.p": "فريقنا يراجع الملفات ويطابق الباحثين عن عمل مع الشركات المناسبة بدقة واحترافية.",
+      "how.s3.title": "التواصل والتوظيف",
+      "how.s3.p": "نتولى التواصل بينك وبين الطرف الآخر وندعمك حتى تُبرم الاتفاقية بنجاح.",
+      "services.eyebrow": "خدماتنا",
+      "services.h2": "نخدم الطرفين بالتساوي",
+      "services.p": "سواء كنت تبحث عن وظيفة أو تبحث عن موظفين، وسيط يوفر لك الحل المثالي.",
+      "services.s1.title": "للباحثين عن عمل",
+      "services.s1.p": "نساعدك في تقديم ملفك للشركات المناسبة وإعداد سيرتك الذاتية بصورة احترافية تزيد فرص قبولك.",
+      "services.s2.title": "للشركات والمؤسسات",
+      "services.s2.p": "نوفر لك قاعدة بيانات من الكفاءات المؤهلة ونختار لك الأنسب وفق متطلباتك بدون عناء البحث.",
+      "services.s3.title": "إعداد السيرة الذاتية",
+      "services.s3.p": "خدمة احترافية لإعداد وتصميم السيرة الذاتية بمستوى دولي يليق بطموحاتك المهنية.",
+      "services.s4.title": "استشارات مهنية",
+      "services.s4.p": "نقدم استشارات مهنية لمساعدتك في التخطيط لمسارك الوظيفي واختيار الفرص الأنسب لك.",
+      "upload.eyebrow": "رفع الملفات",
+      "upload.h2": "ابدأ رحلتك معنا اليوم",
+      "upload.p": "سواء كنت باحثاً عن عمل أو شركة تبحث عن موظفين، أرسل لنا بياناتك الآن.",
+      "upload.why": "لماذا تختار وسيط؟",
+      "upload.li1": "مراجعة ملفك خلال ٢٤ ساعة",
+      "upload.li2": "ربط مباشر مع الشركات والمؤسسات",
+      "upload.li3": "خدمة متاحة لجميع أنحاء موريتانيا",
+      "upload.li4": "سرية تامة لبياناتك ومعلوماتك",
+      "upload.li5": "فريق متخصص ومحترف لمتابعة ملفك",
+      "upload.li6": "دعم مستمر حتى إبرام العقد",
+      "upload.sendNow": "أرسل طلبك الآن",
+      "upload.tab.jobseeker": "🙋 باحث عن عمل",
+      "upload.tab.company": "🏢 شركة / مؤسسة",
+      "upload.js.name": "الاسم الكامل", "upload.js.namePh": "محمد أحمد...",
+      "upload.js.phone": "رقم الهاتف", "upload.js.phonePh": "+222 ...",
+      "upload.js.email": "البريد الإلكتروني",
+      "upload.js.field": "المجال المهني",
+      "upload.js.fieldChoose": "اختر المجال",
+      "upload.js.field1": "هندسة وتكنولوجيا",
+      "upload.js.field2": "محاسبة ومالية",
+      "upload.js.field3": "طب وصحة",
+      "upload.js.field4": "تعليم وتدريس",
+      "upload.js.field5": "قانون",
+      "upload.js.field6": "تسويق وإعلام",
+      "upload.js.field7": "بناء وعمارة",
+      "upload.js.field8": "إدارة أعمال",
+      "upload.js.field9": "أخرى",
+      "upload.js.exp": "سنوات الخبرة",
+      "upload.js.exp1": "حديث التخرج",
+      "upload.js.exp2": "أقل من سنة",
+      "upload.js.exp3": "١–٣ سنوات",
+      "upload.js.exp4": "٣–٥ سنوات",
+      "upload.js.exp5": "٥–١٠ سنوات",
+      "upload.js.exp6": "أكثر من ١٠ سنوات",
+      "upload.js.bio": "نبذة مختصرة عنك",
+      "upload.js.bioPh": "اكتب نبذة قصيرة عن مهاراتك وما تبحث عنه...",
+      "upload.js.cv": "السيرة الذاتية (PDF أو Word)",
+      "upload.js.dropBefore": "اسحب ملفك هنا أو",
+      "upload.js.dropLink": "انقر للاختيار",
+      "upload.js.dropHint": "PDF, DOC, DOCX – بحد أقصى 5MB",
+      "upload.js.submit": "إرسال طلب التوظيف 🏢",
+      "upload.co.name": "اسم الشركة / المؤسسة", "upload.co.namePh": "شركة النجاح...",
+      "upload.co.reg": "رقم التسجيل التجاري", "upload.co.regPh": "اختياري",
+      "upload.co.contact": "اسم المسؤول", "upload.co.contactPh": "المسؤول عن التوظيف",
+      "upload.co.phone": "رقم الهاتف", "upload.co.phonePh": "+222 ...",
+      "upload.co.email": "البريد الإلكتروني",
+      "upload.co.position": "المنصب المطلوب", "upload.co.positionPh": "مثال: محاسب قانوني",
+      "upload.co.vacancies": "عدد الشواغر", "upload.co.vacanciesPh": "١",
+      "upload.co.details": "تفاصيل الوظيفة والمتطلبات",
+      "upload.co.detailsPh": "اذكر المؤهلات المطلوبة، الراتب المقترح، طبيعة العمل...",
+      "upload.co.file": "ملف الوصف الوظيفي (اختياري)",
+      "upload.co.dropBefore": "اسحب ملف الوصف الوظيفي أو",
+      "upload.co.submit": "إرسال الطلب ✉️",
+      "contact.eyebrow": "تواصل معنا",
+      "contact.h2": "نحن هنا لمساعدتك",
+      "contact.p": "تواصل معنا مباشرة أو زر مكتبنا في نواكشوط.",
+      "contact.addrLabel": "العنوان",
+      "contact.addrVal": "نواكشوط، موريتانيا<br/>شارع المدينة — مكتب رقم ١٢",
+      "contact.phoneLabel": "الهاتف",
+      "contact.emailLabel": "البريد الإلكتروني",
+      "contact.hoursLabel": "ساعات العمل",
+      "contact.hoursVal": "الأحد – الخميس<br/>٨:٠٠ ص – ٥:٠٠ م",
+      "contact.sendMsg": "أرسل لنا رسالة",
+      "contact.name": "الاسم", "contact.namePh": "اسمك الكامل",
+      "contact.reach": "الهاتف أو البريد", "contact.reachPh": "كيف نتواصل معك؟",
+      "contact.subject": "الموضوع",
+      "contact.subj1": "استفسار عام",
+      "contact.subj2": "أبحث عن عمل",
+      "contact.subj3": "أبحث عن موظفين",
+      "contact.subj4": "طلب استشارة مهنية",
+      "contact.msg": "رسالتك", "contact.msgPh": "اكتب رسالتك هنا...",
+      "contact.send": "إرسال الرسالة",
+      "footer.tagline": "منصة التوظيف الأولى في موريتانيا — نربط المواهب بالفرص بثقة واحترافية.",
+      "footer.services": "الخدمات",
+      "footer.svc1": "رفع السيرة الذاتية",
+      "footer.svc2": "إعداد السيرة الذاتية",
+      "footer.svc3": "استشارات مهنية",
+      "footer.svc4": "نشر وظيفة",
+      "footer.company": "الشركة",
+      "footer.about": "من نحن",
+      "footer.team": "فريقنا",
+      "footer.partners": "شركاؤنا",
+      "footer.follow": "تابعنا",
+      "footer.fb": "فيسبوك", "footer.wa": "واتساب", "footer.li": "لينكدإن", "footer.ig": "إنستغرام",
+      "footer.rights": "©️ 2025 وسيط Waseet. جميع الحقوق محفوظة.",
+      "footer.locTag": "نواكشوط، موريتانيا 🇲🇷",
+      "toast.default": "✅ تم إرسال طلبك بنجاح! سنتواصل معك قريباً.",
+      "toast.jobseeker": "✅ تم إرسال طلبك بنجاح! سيتواصل معك فريق وسيط خلال ٢٤ ساعة.",
+      "toast.company": "✅ تم إرسال طلب التوظيف بنجاح! سيتواصل معك فريق وسيط قريباً.",
+      "toast.contact": "✅ وصلت رسالتك! سنرد عليك في أقرب وقت ممكن.",
+      "toast.error": "خطأ: "
+    },
+    fr: {
+      "page.title": "Plateforme de recrutement Waseet",
+      "nav.country": "Mauritanie",
+      "nav.how": "Comment ça marche",
+      "nav.services": "Nos services",
+      "nav.upload": "Envoyer un fichier",
+      "nav.contact": "Contactez-nous",
+      "nav.start": "Commencer",
+      "hero.tag": "🇲🇷 Mauritanie · Nouakchott",
+      "hero.h1": "Nous connectons les <span>talents</span><br/>aux vraies opportunités",
+      "hero.p": "Waseet est votre plateforme de recrutement de confiance en Mauritanie — elle relie les chercheurs d'emploi aux entreprises en quête de compétences, avec rapidité, transparence et professionnalisme.",
+      "hero.btn1": "Envoyer mon fichier",
+      "hero.btn2": "Comment fonctionne le site ?",
+      "hero.card1.title": "Ingénieur logiciel",
+      "hero.card1.sub": "3 ans d'expérience · Nouakchott",
+      "hero.card2.title": "Ingénieur civil",
+      "hero.card2.sub": "5 ans d'expérience · Nouadhibou",
+      "hero.card3.title": "Expert-comptable",
+      "hero.card3.sub": "4 ans d'expérience · Nouakchott",
+      "hero.card4.title": "Société Al-Bina Al-Dahabi",
+      "hero.card4.sub": "Recherche 3 employés",
+      "hero.available": "Disponible",
+      "hero.company": "Entreprise",
+      "stats.n1": "+500", "stats.l1": "Candidats inscrits",
+      "stats.n2": "+120", "stats.l2": "Entreprises partenaires",
+      "stats.n3": "+200", "stats.l3": "Recrutements réussis",
+      "stats.n4": "95%", "stats.l4": "Taux de satisfaction",
+      "how.eyebrow": "Comment ça marche",
+      "how.h2": "Trois étapes pour décrocher un emploi",
+      "how.p": "Un processus simple et rapide qui vous garantit d'accéder à l'opportunité ou à la compétence que vous recherchez.",
+      "how.s1.title": "Envoyez votre fichier ou votre demande",
+      "how.s1.p": "Enregistrez vos informations et envoyez votre CV ou votre demande de recrutement directement via la plateforme, en toute simplicité.",
+      "how.s2.title": "Waseet examine et met en relation",
+      "how.s2.p": "Notre équipe examine les dossiers et met en relation les candidats avec les entreprises adéquates, avec précision et professionnalisme.",
+      "how.s3.title": "Mise en relation et recrutement",
+      "how.s3.p": "Nous assurons la communication entre vous et l'autre partie et vous accompagnons jusqu'à la conclusion de l'accord.",
+      "services.eyebrow": "Nos services",
+      "services.h2": "Nous servons les deux parties de façon égale",
+      "services.p": "Que vous cherchiez un emploi ou du personnel, Waseet vous offre la solution idéale.",
+      "services.s1.title": "Pour les chercheurs d'emploi",
+      "services.s1.p": "Nous vous aidons à soumettre votre dossier aux entreprises adéquates et à préparer un CV professionnel qui augmente vos chances.",
+      "services.s2.title": "Pour les entreprises et institutions",
+      "services.s2.p": "Nous vous fournissons une base de données de talents qualifiés et sélectionnons pour vous le profil le plus adapté à vos besoins.",
+      "services.s3.title": "Préparation de CV",
+      "services.s3.p": "Un service professionnel de préparation et de conception de CV, au niveau international, à la hauteur de vos ambitions.",
+      "services.s4.title": "Conseil professionnel",
+      "services.s4.p": "Nous offrons un accompagnement professionnel pour planifier votre parcours et choisir les opportunités qui vous conviennent le mieux.",
+      "upload.eyebrow": "Envoi de fichiers",
+      "upload.h2": "Commencez votre parcours avec nous dès aujourd'hui",
+      "upload.p": "Que vous soyez candidat ou entreprise à la recherche de personnel, envoyez-nous vos informations maintenant.",
+      "upload.why": "Pourquoi choisir Waseet ?",
+      "upload.li1": "Examen de votre dossier sous 24 heures",
+      "upload.li2": "Mise en relation directe avec les entreprises",
+      "upload.li3": "Service disponible dans toute la Mauritanie",
+      "upload.li4": "Confidentialité totale de vos données",
+      "upload.li5": "Équipe spécialisée pour suivre votre dossier",
+      "upload.li6": "Accompagnement continu jusqu'à la signature",
+      "upload.sendNow": "Envoyez votre demande maintenant",
+      "upload.tab.jobseeker": "🙋 Chercheur d'emploi",
+      "upload.tab.company": "🏢 Entreprise / Institution",
+      "upload.js.name": "Nom complet", "upload.js.namePh": "Mohamed Ahmed...",
+      "upload.js.phone": "Numéro de téléphone", "upload.js.phonePh": "+222 ...",
+      "upload.js.email": "Adresse e-mail",
+      "upload.js.field": "Domaine professionnel",
+      "upload.js.fieldChoose": "Choisir le domaine",
+      "upload.js.field1": "Ingénierie et technologie",
+      "upload.js.field2": "Comptabilité et finance",
+      "upload.js.field3": "Médecine et santé",
+      "upload.js.field4": "Éducation et enseignement",
+      "upload.js.field5": "Droit",
+      "upload.js.field6": "Marketing et médias",
+      "upload.js.field7": "Construction et architecture",
+      "upload.js.field8": "Gestion d'entreprise",
+      "upload.js.field9": "Autre",
+      "upload.js.exp": "Années d'expérience",
+      "upload.js.exp1": "Nouveau diplômé",
+      "upload.js.exp2": "Moins d'un an",
+      "upload.js.exp3": "1–3 ans",
+      "upload.js.exp4": "3–5 ans",
+      "upload.js.exp5": "5–10 ans",
+      "upload.js.exp6": "Plus de 10 ans",
+      "upload.js.bio": "Brève présentation",
+      "upload.js.bioPh": "Décrivez brièvement vos compétences et ce que vous recherchez...",
+      "upload.js.cv": "CV (PDF ou Word)",
+      "upload.js.dropBefore": "Glissez votre fichier ici ou",
+      "upload.js.dropLink": "cliquez pour choisir",
+      "upload.js.dropHint": "PDF, DOC, DOCX – max 5MB",
+      "upload.js.submit": "Envoyer la demande d'emploi 🏢",
+      "upload.co.name": "Nom de l'entreprise / institution", "upload.co.namePh": "Société Al-Najah...",
+      "upload.co.reg": "Numéro de registre de commerce", "upload.co.regPh": "Facultatif",
+      "upload.co.contact": "Nom du responsable", "upload.co.contactPh": "Responsable du recrutement",
+      "upload.co.phone": "Numéro de téléphone", "upload.co.phonePh": "+222 ...",
+      "upload.co.email": "Adresse e-mail",
+      "upload.co.position": "Poste recherché", "upload.co.positionPh": "Ex : Expert-comptable",
+      "upload.co.vacancies": "Nombre de postes", "upload.co.vacanciesPh": "1",
+      "upload.co.details": "Détails du poste et exigences",
+      "upload.co.detailsPh": "Indiquez les qualifications requises, le salaire proposé, la nature du travail...",
+      "upload.co.file": "Fichier de description du poste (facultatif)",
+      "upload.co.dropBefore": "Glissez le fichier de description ou",
+      "upload.co.submit": "Envoyer la demande ✉️",
+      "contact.eyebrow": "Contactez-nous",
+      "contact.h2": "Nous sommes là pour vous aider",
+      "contact.p": "Contactez-nous directement ou visitez notre bureau à Nouakchott.",
+      "contact.addrLabel": "Adresse",
+      "contact.addrVal": "Nouakchott, Mauritanie<br/>Avenue de la Ville — Bureau n°12",
+      "contact.phoneLabel": "Téléphone",
+      "contact.emailLabel": "E-mail",
+      "contact.hoursLabel": "Heures d'ouverture",
+      "contact.hoursVal": "Dimanche – Jeudi<br/>8h00 – 17h00",
+      "contact.sendMsg": "Envoyez-nous un message",
+      "contact.name": "Nom", "contact.namePh": "Votre nom complet",
+      "contact.reach": "Téléphone ou e-mail", "contact.reachPh": "Comment vous joindre ?",
+      "contact.subject": "Sujet",
+      "contact.subj1": "Demande générale",
+      "contact.subj2": "Je cherche un emploi",
+      "contact.subj3": "Je cherche du personnel",
+      "contact.subj4": "Demande de conseil professionnel",
+      "contact.msg": "Votre message", "contact.msgPh": "Écrivez votre message ici...",
+      "contact.send": "Envoyer le message",
+      "footer.tagline": "La première plateforme de recrutement en Mauritanie — nous connectons les talents aux opportunités avec confiance et professionnalisme.",
+      "footer.services": "Services",
+      "footer.svc1": "Envoyer un CV",
+      "footer.svc2": "Préparation de CV",
+      "footer.svc3": "Conseil professionnel",
+      "footer.svc4": "Publier une offre",
+      "footer.company": "Entreprise",
+      "footer.about": "À propos",
+      "footer.team": "Notre équipe",
+      "footer.partners": "Nos partenaires",
+      "footer.follow": "Suivez-nous",
+      "footer.fb": "Facebook", "footer.wa": "WhatsApp", "footer.li": "LinkedIn", "footer.ig": "Instagram",
+      "footer.rights": "©️ 2025 Waseet. Tous droits réservés.",
+      "footer.locTag": "Nouakchott, Mauritanie 🇲🇷",
+      "toast.default": "✅ Votre demande a été envoyée avec succès ! Nous vous contacterons bientôt.",
+      "toast.jobseeker": "✅ Votre demande a été envoyée avec succès ! L'équipe Waseet vous contactera sous 24 heures.",
+      "toast.company": "✅ Votre offre a été envoyée avec succès ! L'équipe Waseet vous contactera bientôt.",
+      "toast.contact": "✅ Votre message est bien arrivé ! Nous vous répondrons dès que possible.",
+      "toast.error": "Erreur : "
+    }
+  };
+
+  let currentLang = 'ar';
+
+  function applyTranslations(lang) {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const val = translations[lang][key];
+      if (val !== undefined) el.innerHTML = val;
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+      const key = el.getAttribute('data-i18n-ph');
+      const val = translations[lang][key];
+      if (val !== undefined) el.setAttribute('placeholder', val);
+    });
+  }
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    const html = document.getElementById('html-root');
+    html.setAttribute('lang', lang);
+    html.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.body.classList.toggle('lang-fr', lang === 'fr');
+    document.getElementById('page-title').textContent = translations[lang]['page.title'];
+
+    ['lang-btn-ar', 'lang-btn-ar-m'].forEach(id => document.getElementById(id).classList.toggle('active', lang === 'ar'));
+    ['lang-btn-fr', 'lang-btn-fr-m'].forEach(id => document.getElementById(id).classList.toggle('active', lang === 'fr'));
+
+    applyTranslations(lang);
+  }
+
   function switchTab(type, btn) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -837,13 +1172,10 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
 
   function showToast(msg) {
     const t = document.getElementById('toast');
-    t.textContent = msg || '✅ تم إرسال طلبك بنجاح! سنتواصل معك قريباً.';
+    t.textContent = msg || translations[currentLang]['toast.default'];
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 4000);
   }
-
-  function submitForm()    { showToast('✅ تم إرسال طلبك بنجاح! سيتواصل معك فريق وسيط خلال ٢٤ ساعة.'); }
-  function submitContact() { showToast('✅ وصلت رسالتك! سنرد عليك في أقرب وقت ممكن.'); }
 
   // Smooth nav highlight
   const sections = document.querySelectorAll('section[id], div[id]');
@@ -855,68 +1187,35 @@ cat > /mnt/user-data/outputs/waseet.html << 'HTMLEOF'
       const inView = y >= s.offsetTop && y < s.offsetTop + s.offsetHeight;
       link.style.color = inView ? 'var(--gold)' : '';
     });
-  }); const supabaseUrl = 'https://xhtafjnysrahqzfzmllu.supabase.co';
-const supabaseKey = 'sb_publishable_VrcvjVscUp7APgReUIbJEA_A2ip6nQt';
+  });
 
-const db = window.supabase.createClient(supabaseUrl, supabaseKey);
+  /* ─── SUPABASE ─── */
+  const supabaseUrl = 'https://xhtafjnysrahqzfzmllu.supabase.co';
+  const supabaseKey = 'sb_publishable_VrcvjVscUp7APgReUIbJEA_A2ip6nQt';
+  const db = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-async function submitForm() {
-  const inputs = document.querySelectorAll('#form-jobseeker input');
-
-  const data = {
-    Name: inputs[0].value,
-    phone: inputs[1].value,
-    email: inputs[2].value
-  };
-
-  const { error } = await db
-    .from('candidates')
-    .insert([data]);
-
-  if (error) {
-    alert('خطأ: ' + error.message);
-  } else {
-    showToast('✅ تم إرسال الطلب وحفظه في قاعدة البيانات');
+  async function submitForm() {
+    const inputs = document.querySelectorAll('#form-jobseeker input');
+    const data = {
+      Name: inputs[0].value,
+      phone: inputs[1].value,
+      email: inputs[2].value
+    };
+    const { error } = await db.from('candidates').insert([data]);
+    if (error) {
+      alert(translations[currentLang]['toast.error'] + error.message);
+    } else {
+      showToast(translations[currentLang]['toast.jobseeker']);
+    }
   }
-} if (error) {
-    alert('خطأ: ' + error.message);
-  } else {
-    showToast('✅ تم إرسال الطلب وحفظه في قاعدة البيانات');
+
+  async function submitCompany() {
+    showToast(translations[currentLang]['toast.company']);
   }
-}
 
-// ألصق من هنا
-
-let lang = "ar";
-
-function toggleLanguage() {
-  if (lang === "ar") {
-    lang = "fr";
-
-    document.documentElement.lang = "fr";
-    document.documentElement.dir = "ltr";
-
-    document.getElementById("langBtn").textContent = "AR";
-    document.getElementById("startBtn").textContent = "Commencer";
-
-  } else {
-    lang = "ar";
-
-    document.documentElement.lang = "ar";
-    document.documentElement.dir = "rtl";
-
-    document.getElementById("langBtn").textContent = "FR";
-    document.getElementById("startBtn").textContent = "ابدأ الآن";
+  function submitContact() {
+    showToast(translations[currentLang]['toast.contact']);
   }
-}
-
-// إلى هنا
-
 </script>
 </body>
 </html>
-</script>
-</body>
-</html>
-HTMLEOF
-echo "Done"
